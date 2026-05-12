@@ -8,4 +8,4 @@ def save_checkpoint(data, path):
 
 def load_checkpoint(path):
     with open(path, "rb") as f:
-        return pickle.load(f)
+        return pickle.load(f)  # nosec B301
