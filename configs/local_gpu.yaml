@@ -1,0 +1,8 @@
+# AniRec v22 — local GPU workstation overrides
+
+drive_root: "./AniRec_output"
+memory_profile: "max"
+use_amp: true
+batch_size: 512
+n_epochs: 60
+subsample: 0.25

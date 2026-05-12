@@ -1,0 +1,8 @@
+# AniRec v22 — Google Colab overrides
+# Inherits all defaults; only specify keys that differ.
+
+drive_root: "/content/drive/MyDrive/AniRec"
+memory_profile: "safe"
+use_amp: true
+batch_size: 256
+subsample: 0.10

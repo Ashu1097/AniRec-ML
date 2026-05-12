@@ -1,0 +1,134 @@
+# AniRec v22 — Default Configuration
+# All hyper-parameters in one place. Override via CLI or your own YAML.
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+data:
+  n_top_anime: 5000
+  n_top_movies: 200
+  n_users_target: 6000
+  n_review_anime: 150
+  n_review_pages: 3
+  max_user_pages: 8
+  min_user_ratings: 10
+
+  # MovieLens config
+  ml_dataset_url: "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
+  ml_dataset_name: "ml-latest-small"
+  ml_min_ratings: 5
+  ml_rating_scale: 5.0
+  ml_user_prefix: "ml_"
+  ml_weight_scale: 3.0
+
+  imdb_min_votes: 200
+  imdb_title_types: ["movie", "tvSeries", "tvMiniSeries"]
+
+  watchlist_status_weights:
+    completed: 3.0
+    watching: 2.5
+    on_hold: 1.5
+    plan_to_watch: 0.5
+    dropped: -2.0
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+model:
+  memory_profile: "safe"   # safe | fast | max
+  dim: 256                 # embedding dimension
+  n_gnn_layers: 2
+  n_heads: 4               # SASRec attention heads
+  n_blocks: 1              # SASRec transformer blocks
+  dropout: 0.2
+  max_seq_len: 30
+  content_dim: 64
+  domain_dim: 32
+  n_domains: 3
+  mlp_dims: [256, 128, 64]
+
+  # Text / Tone embeddings
+  text_embed_dim: 384
+  text_model_name: "all-MiniLM-L6-v2"
+  text_proj_dim: 64
+  tone_n_clusters: 12
+  tone_proj_dim: 16
+  tone_dim_in: 6
+
+# ── Training ──────────────────────────────────────────────────────────────────
+training:
+  n_epochs: 40
+  batch_size: 256
+  lr: 0.0002
+  gnn_lr_scale: 1.0
+  weight_decay: 0.0001
+  n_neg: 6
+  subsample: 0.10
+  cl_lambda: 0.40
+  cl_temp: 0.07
+  dns_k: 128
+  vicreg_lambda: 0.02
+  vicreg_gamma: 1.0
+  eval_every: 3
+  save_every: 10
+  patience: 25
+  use_amp: true
+  l2_reg: 0.0001
+  seed: 42
+  resume: true
+  feedback_bpr_weight: 2.0
+  domain_balance_movie_frac: 0.30
+  pop_neg_start: 0.50
+  pop_neg_end: 0.20
+  pop_neg_anneal_epochs: 10
+  inbatch_w_start: 0.3
+  inbatch_w_end: 0.1
+
+# ── Inference / Scoring ───────────────────────────────────────────────────────
+inference:
+  top_k: 10
+  top_k_cands: 2000
+  pop_floor: 0
+  n_eval_neg: 99
+  epsilon_exploration: 0.10
+  intent_window: 5
+  mmr_lambda: 0.72
+  franchise_similarity_thr: 0.92
+  genre_diversity_penalty: 0.25
+  max_same_genre_in_top_k: 3
+  domain_match_boost: 0.15
+  domain_mismatch_supp: 0.75
+  cold_start_top_n_popular: 50
+  cold_start_content_weight: 0.7
+  debug_scores: false
+
+  # Candidate generation
+  cand_pool_mult: 5
+  cand_pop_penalty_weight: 0.40
+  cand_max_pop_frac: 0.30
+  cand_pop_cap_threshold: 0.80
+  cand_mmr_lambda: 0.72
+  cand_explore_eps: 0.05
+
+  score_weights:
+    w_model: 0.20
+    w_diversity: 0.03
+    w_novelty: 0.08
+    w_recency: 0.04
+    w_pop: 0.00
+    w_domain: 0.04
+    w_text_sim: 0.42
+    w_tone_sim: 0.10
+    w_pop_anime: 0.00
+    w_genre: 0.05
+    w_secondary: 0.04
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+paths:
+  drive_root: "./AniRec_output"
+  ckpt_subdir: "v22"
+  embed_subdir: "embeddings"
+  cache_subdir: "api_cache"
+  data_subdir: "data"
+
+# ── API ───────────────────────────────────────────────────────────────────────
+api:
+  host: "0.0.0.0"
+  port: 8000
+  default_k: 10
