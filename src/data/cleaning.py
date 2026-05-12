@@ -10,7 +10,7 @@ import numpy as np
 
 _RE_HTML_TAG = re.compile(r"<[^>]+>")
 _RE_URL = re.compile(r"https?://\S+|www\.\S+")
-_RE_SPECIAL = re.compile(r"[^a-z0-9\s\-\'\\.,!?]")
+_RE_SPECIAL = re.compile(r"[^a-z0-9\s]")
 _RE_WHITESPACE = re.compile(r"\s+")
 
 _GENRE_ALIASES: Dict[str, str] = {
@@ -66,27 +66,27 @@ def clean_genres(genres: List[str], *, remove_adult: bool = True) -> List[str]:
     return result
 
 
-def normalize_popularity(counts: np.ndarray, *, clip_pct: float = 95.0) -> np.ndarray:
-    """Log-scale min-max normalisation with outlier clipping."""
-
-    arr = counts.astype(np.float64).copy()
+def normalize_popularity(counts, clip_pct=95.0):
+    arr = np.asarray(counts, dtype=np.float32)
 
     if arr.size == 0:
-        return np.array([], dtype=np.float32)
+        return arr
 
-    positive = arr[arr > 0]
+    if np.all(arr == 0):
+        return np.zeros_like(arr, dtype=np.float32)
 
-    upper = np.percentile(positive, clip_pct) if positive.size > 0 else 1.0
+    upper = np.percentile(arr, clip_pct)
 
     arr = np.clip(arr, 0, upper)
+
     arr = np.log1p(arr)
 
-    lo, hi = arr.min(), arr.max()
+    ranks = arr.argsort().argsort().astype(np.float32)
 
-    if hi - lo < 1e-8:
-        return np.zeros(len(arr), dtype=np.float32)
+    if ranks.max() > 0:
+        ranks /= ranks.max()
 
-    return ((arr - lo) / (hi - lo)).astype(np.float32)
+    return ranks.astype(np.float32)
 
 
 def normalize_ratings(ratings: np.ndarray) -> np.ndarray:

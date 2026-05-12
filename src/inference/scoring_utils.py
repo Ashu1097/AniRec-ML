@@ -15,26 +15,24 @@ def safe_normalize(x: np.ndarray) -> np.ndarray:
 
 
 def zscore_normalize(
-    x: np.ndarray,
-    clip_sigma: float = 2.5,
-    target_lo: float = 0.05,
-    target_hi: float = 0.95,
-) -> np.ndarray:
-    """Z-score normalisation with σ-clipping, then rescale to [target_lo, target_hi]."""
+    x,
+    target_lo=0.05,
+    target_hi=0.95,
+    clip_sigma=3.0,
+):
     x = np.asarray(x, dtype=np.float32)
-    if len(x) <= 1:
-        return np.full_like(x, (target_lo + target_hi) / 2)
-    mu = float(x.mean())
-    std = float(x.std())
-    if std < 1e-8:
-        ranks = np.argsort(np.argsort(-x)).astype(np.float32)
-        return (target_hi - (target_hi - target_lo) * ranks / max(len(x) - 1, 1)).astype(np.float32)
-    z = np.clip((x - mu) / std, -clip_sigma, clip_sigma)
-    lo, hi = z.min(), z.max()
-    if hi - lo < 1e-8:
-        return np.full_like(x, (target_lo + target_hi) / 2)
-    return (target_lo + (z - lo) / (hi - lo) * (target_hi - target_lo)).astype(np.float32)
 
+    if x.size == 0:
+        return x
+
+    ranks = x.argsort().argsort().astype(np.float32)
+
+    if ranks.max() > 0:
+        ranks /= ranks.max()
+
+    out = target_lo + ranks * (target_hi - target_lo)
+
+    return out.astype(np.float32)
 
 def sharpen_scores(
     scores: np.ndarray,
@@ -83,58 +81,66 @@ def power_scale(scores: np.ndarray, exponent: float = 1.5) -> np.ndarray:
     """Apply x^exponent power scaling after clipping to [0, 1]."""
     return np.power(np.clip(scores, 0.0, 1.0), exponent).astype(np.float32)
 
-def calibrate_scores(scores):
-    if not scores:
-        return []
+def calibrate_scores(scores, domain_mask=None):
+    scores = np.asarray(scores, dtype=np.float32)
 
-    lo = min(scores)
-    hi = max(scores)
+    if scores.size == 0:
+        return scores
 
-    if hi - lo == 0:
-        return [1.0 for _ in scores]
+    out = safe_normalize(scores)
 
-    return [(s - lo) / (hi - lo) for s in scores]
+    out = enforce_score_spread(out)
 
-def compute_genre_match_score(genres_a, genres_b):
-    """
-    Simple genre overlap score.
-    """
+    if domain_mask is not None:
+        out = out * np.asarray(domain_mask, dtype=np.float32)
 
-    set_a = set(genres_a or [])
-    set_b = set(genres_b or [])
+    return out.astype(np.float32)
 
-    if not set_a or not set_b:
-        return 0.0
+def compute_genre_match_score(cands, item_genres, user_gw=None):
+    user_gw = user_gw or {}
 
-    overlap = len(set_a & set_b)
-    union = len(set_a | set_b)
+    out = []
 
-    return overlap / union
+    for item_id in cands:
+        genres = item_genres.get(item_id, [])
 
-def diversity_penalty_scores(scores, penalty=0.1):
-    """
-    Apply a simple diversity penalty across ranked scores.
-    """
+        score = 0.0
 
-    if not scores:
-        return []
+        for g in genres:
+            score += user_gw.get(g, 0.0)
 
-    adjusted = []
+        out.append(score)
 
-    for idx, score in enumerate(scores):
-        adjusted_score = score - (idx * penalty)
-        adjusted.append(adjusted_score)
+    return np.asarray(out, dtype=np.float32)
 
-    return adjusted
+def diversity_penalty_scores(
+    cands,
+    scores,
+    item_genres,
+    penalty_strength=0.2,
+):
+    out = np.zeros(len(cands), dtype=np.float32)
 
-def popularity_penalty(score, popularity, alpha=0.1):
-    """
-    Penalize overly popular items slightly.
-    """
+    seen = []
 
-    try:
-        popularity = float(popularity)
-    except Exception:
-        popularity = 0.0
+    for i, item_id in enumerate(cands):
+        genres = set(item_genres.get(item_id, []))
 
-    return score - (alpha * popularity)
+        penalty = 0.0
+
+        for prev in seen:
+            overlap = len(genres & prev)
+
+            if overlap > 0:
+                penalty += penalty_strength * overlap
+
+        out[i] = -penalty
+
+        seen.append(genres)
+
+    return out
+
+def popularity_penalty(popularity, alpha=1.0):
+    popularity = np.asarray(popularity, dtype=np.float32)
+
+    return 1.0 / (1.0 + alpha * popularity)
