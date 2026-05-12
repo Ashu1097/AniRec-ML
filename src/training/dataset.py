@@ -260,9 +260,6 @@ def load_dataset_v19(
             item_pop_raw[mi] = max(vc / 1000.0 + va * 10 + tp, 1.0)
 
     item_pop      = item_pop_raw / (item_pop_raw.sum() + 1e-8)
-    print("item_pop_raw:", item_pop_raw)
-    print("shape:", item_pop_raw.shape)
-    print("size:", item_pop_raw.size)
     item_pop_norm = normalize_popularity(item_pop_raw)
     item_popularity = dict(enumerate(item_pop_raw.astype(np.float64).tolist()))
 
