@@ -41,9 +41,7 @@ def run_training(
     """
     # Local import keeps startup fast when only inference is needed.
     try:
-        import numpy as np
         import torch
-        from torch.amp import GradScaler
     except ImportError as exc:
         raise ImportError(
             "PyTorch is required for training. Install it with: pip install torch"
