@@ -11,7 +11,6 @@ from __future__ import annotations
 import gc
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 import numpy as np
 import scipy.sparse as sp
@@ -28,7 +27,7 @@ ML_USER_PREFIX = "ml_"
 
 
 # ---------------------------------------------------------------------------
-def _build_genre_vocab(items: List[dict]) -> Dict[str, int]:
+def _build_genre_vocab(items: list[dict]) -> dict[str, int]:
     all_g: set = set()
     for it in items:
         all_g.update(it.get("genres", []))
@@ -36,7 +35,7 @@ def _build_genre_vocab(items: List[dict]) -> Dict[str, int]:
     return {g: i for i, g in enumerate(sorted(all_g))}
 
 
-def _encode_genres_list(items: List[dict], g2i: Dict[str, int]) -> np.ndarray:
+def _encode_genres_list(items: list[dict], g2i: dict[str, int]) -> np.ndarray:
     mat = np.zeros((len(items), len(g2i)), dtype=np.float32)
     for i, it in enumerate(items):
         for g in it.get("genres", []):
@@ -46,11 +45,11 @@ def _encode_genres_list(items: List[dict], g2i: Dict[str, int]) -> np.ndarray:
 
 
 def _build_item_sequel_ids(
-    anime_catalog: Dict[int, dict],
-    al2i: Dict[int, int],
-    ani2i: Dict[int, int],
-) -> Dict[int, Set[int]]:
-    result: Dict[int, Set[int]] = {}
+    anime_catalog: dict[int, dict],
+    al2i: dict[int, int],
+    ani2i: dict[int, int],
+) -> dict[int, set[int]]:
+    result: dict[int, set[int]] = {}
     for mal_id, meta in anime_catalog.items():
         src_idx = ani2i.get(mal_id, -1)
         if src_idx < 0:
@@ -67,13 +66,13 @@ def _build_item_sequel_ids(
 
 # ---------------------------------------------------------------------------
 def load_dataset_v19(
-    anime_catalog: Dict[int, dict],
-    movie_catalog: Dict[int, dict],
-    anime_interactions: Dict[str, List],
-    movie_interactions: Dict[str, List],
-    embedding_dir: Optional[Path] = None,
+    anime_catalog: dict[int, dict],
+    movie_catalog: dict[int, dict],
+    anime_interactions: dict[str, list],
+    movie_interactions: dict[str, list],
+    embedding_dir: Path | None = None,
     max_seq_len: int = MAX_SEQ_LEN,
-    rng_: Optional[np.random.Generator] = None,
+    rng_: np.random.Generator | None = None,
 ) -> dict:
     """
     Build the full training dataset from catalogs and interaction dicts.
@@ -97,7 +96,7 @@ def load_dataset_v19(
     mov2i = {m: i + n_ani for i, m in enumerate(movie_list)}
     item_domain = {**dict.fromkeys(range(n_ani), 0), **dict.fromkeys(range(n_ani, n_i), 1)}
 
-    al2i: Dict[int, int] = {}
+    al2i: dict[int, int] = {}
     for mal_id, meta in anime_catalog.items():
         al_id = meta.get("anilist_id")
         if al_id and int(al_id) not in al2i:
@@ -169,14 +168,14 @@ def load_dataset_v19(
         tr_u, tr_i, tr_d, tr_w, tr_t = (tr_u[mask], tr_i[mask], tr_d[mask], tr_w[mask], tr_t[mask])
 
     # ── Train / val / test splits ─────────────────────────────────────────
-    user_hist: Dict[int, List] = {}
+    user_hist: dict[int, list] = {}
     for u, i, d, w, t in zip(tr_u, tr_i, tr_d, tr_w, tr_t):
         user_hist.setdefault(int(u), []).append((int(i), int(d), float(w), int(t)))
     for uid in user_hist:
         user_hist[uid].sort(key=lambda x: (x[3], x[0]))
 
     train_triples, val_data, test_data = [], [], []
-    user_train_items: Dict[int, set] = {}
+    user_train_items: dict[int, set] = {}
 
     for uid, hist in user_hist.items():
         if len(hist) < 3:
@@ -271,7 +270,7 @@ def load_dataset_v19(
     item_popularity = dict(enumerate(item_pop_raw.astype(np.float64).tolist()))
 
     # Year-based recency
-    item_year: Dict[int, int] = {}
+    item_year: dict[int, int] = {}
     for a in anime_list:
         yr_str = (anime_catalog[a].get("aired_from") or "")[:4]
         try:
@@ -286,7 +285,7 @@ def load_dataset_v19(
             item_year[mov2i[m]] = 0
 
     # ── Descriptions + embeddings ─────────────────────────────────────────
-    item_descriptions: Dict[int, str] = {}
+    item_descriptions: dict[int, str] = {}
     for a in anime_list:
         item_descriptions[ani2i[a]] = anime_catalog[a].get("synopsis", "")
     for m in movie_list:
@@ -317,40 +316,40 @@ def load_dataset_v19(
     item_genres = {ani2i[a]: anime_catalog[a].get("genres", []) for a in anime_list}
     item_genres.update({mov2i[m]: movie_catalog[m].get("genres", []) for m in movie_list})
 
-    return dict(
-        n_users=n_u,
-        n_items=n_i,
-        n_anime=n_ani,
-        n_movies=n_mov,
-        n_genres=len(g2i),
-        item_content=item_content,
-        item_pop=item_pop,
-        item_popularity=item_popularity,
-        item_popularity_norm=item_pop_norm,
-        item_year=item_year,
-        train=dict(users=tr_u2, items=tr_i2, domains=tr_d2, weights=train_w),
-        anime_train_idx=anime_train_idx,
-        movie_train_idx=movie_train_idx,
-        val=val_arr,
-        test=test_arr,
-        A_tilde=A_tilde,
-        seqs=seqs,
-        user_seq_full=user_seq_snapshot,
-        anime_names=anime_names,
-        movie_names=movie_names,
-        item_genres=item_genres,
-        genre_vocab=g2i,
-        user_train_items=user_train_items,
-        item_text_embeddings=item_text_embeddings,
-        tone_scores=tone_scores,
-        tone_labels=tone_labels,
-        item_descriptions=item_descriptions,
-        user_id_map=u2i,
-        item_id_map={**ani2i, **{m: mov2i[m] for m in movie_list}},
-        n_ml_users=n_ml_users,
-        item_domain=item_domain,
-        ani2i=ani2i,
-        mov2i=mov2i,
-        al2i=al2i,
-        item_sequel_ids=_build_item_sequel_ids(anime_catalog, al2i, ani2i),
-    )
+    return {
+        "n_users": n_u,
+        "n_items": n_i,
+        "n_anime": n_ani,
+        "n_movies": n_mov,
+        "n_genres": len(g2i),
+        "item_content": item_content,
+        "item_pop": item_pop,
+        "item_popularity": item_popularity,
+        "item_popularity_norm": item_pop_norm,
+        "item_year": item_year,
+        "train": {"users": tr_u2, "items": tr_i2, "domains": tr_d2, "weights": train_w},
+        "anime_train_idx": anime_train_idx,
+        "movie_train_idx": movie_train_idx,
+        "val": val_arr,
+        "test": test_arr,
+        "A_tilde": A_tilde,
+        "seqs": seqs,
+        "user_seq_full": user_seq_snapshot,
+        "anime_names": anime_names,
+        "movie_names": movie_names,
+        "item_genres": item_genres,
+        "genre_vocab": g2i,
+        "user_train_items": user_train_items,
+        "item_text_embeddings": item_text_embeddings,
+        "tone_scores": tone_scores,
+        "tone_labels": tone_labels,
+        "item_descriptions": item_descriptions,
+        "user_id_map": u2i,
+        "item_id_map": {**ani2i, **{m: mov2i[m] for m in movie_list}},
+        "n_ml_users": n_ml_users,
+        "item_domain": item_domain,
+        "ani2i": ani2i,
+        "mov2i": mov2i,
+        "al2i": al2i,
+        "item_sequel_ids": _build_item_sequel_ids(anime_catalog, al2i, ani2i),
+    }

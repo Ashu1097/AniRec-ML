@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 import time
-from typing import Any, Dict
+from typing import Any
 
 try:
     from tqdm import tqdm as _tqdm_cls
@@ -44,7 +44,7 @@ class ProgressBar:
         self.unit = unit
         self.colour = colour
         self._start = time.perf_counter()
-        self._postfix: Dict[str, Any] = {}
+        self._postfix: dict[str, Any] = {}
 
         if HAS_TQDM:
             self._bar = _tqdm_cls(

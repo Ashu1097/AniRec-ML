@@ -5,7 +5,7 @@ Requires: pip install fastapi uvicorn
 Start with: uvicorn src.api.routes:app --host 0.0.0.0 --port 8000
 """
 
-from typing import List, Optional
+from typing import Optional
 
 try:
     from fastapi import FastAPI, HTTPException
@@ -23,7 +23,7 @@ if _HAS_FASTAPI:
     )
 
     class ItemSeedRequest(BaseModel):
-        titles: List[str]
+        titles: list[str]
         k: int = 10
         ui_context: str = "all"
         user_id: Optional[str] = None

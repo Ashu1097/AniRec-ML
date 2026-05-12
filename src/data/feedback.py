@@ -3,7 +3,6 @@
 import sqlite3
 import time
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
 
 
 class FeedbackStore:
@@ -47,7 +46,7 @@ class FeedbackStore:
         conn.commit()
         conn.close()
 
-    def get_all(self) -> List[dict]:
+    def get_all(self) -> list[dict]:
         conn = sqlite3.connect(self.db_path)
         rows = conn.execute("SELECT user_id, item_id, signal FROM feedback ORDER BY ts").fetchall()
         conn.close()
@@ -55,9 +54,9 @@ class FeedbackStore:
 
     def get_bpr_pairs(
         self,
-        user_id_map: Dict[str, int],
-        item_id_map: Dict[int, int],
-    ) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
+        user_id_map: dict[str, int],
+        item_id_map: dict[int, int],
+    ) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
         rows = self.get_all()
         pos, neg = [], []
         for row in rows:
@@ -68,7 +67,7 @@ class FeedbackStore:
             (pos if row["signal"] == 1 else neg).append((uid, iid))
         return pos, neg
 
-    def get_user_signals(self, user_id: str) -> Dict[int, int]:
+    def get_user_signals(self, user_id: str) -> dict[int, int]:
         conn = sqlite3.connect(self.db_path)
         rows = conn.execute(
             "SELECT item_id, signal FROM feedback WHERE user_id=?",
@@ -77,7 +76,7 @@ class FeedbackStore:
         conn.close()
         return {r[0]: r[1] for r in rows}
 
-    def get_disliked_items(self, user_id: str) -> Set[int]:
+    def get_disliked_items(self, user_id: str) -> set[int]:
         conn = sqlite3.connect(self.db_path)
         rows = conn.execute(
             "SELECT item_id FROM feedback WHERE user_id=? AND signal=-1",

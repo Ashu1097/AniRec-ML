@@ -1,10 +1,9 @@
 # Stub: full implementation in notebooks/experimentation.ipynb.
-from typing import Dict, List
 
 import pandas as pd
 
 
-def load_movielens_interactions(path: str) -> Dict[str, List[dict]]:
+def load_movielens_interactions(path: str) -> dict[str, list[dict]]:
     df = pd.read_csv(path)
 
     interactions = {}

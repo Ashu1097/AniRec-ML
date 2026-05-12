@@ -1,6 +1,6 @@
 """Training loss functions for AniRec v22."""
 
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -115,7 +115,7 @@ def combined_training_loss(
     cl_lambda: float = _CL_LAMBDA,
     vicreg_lambda: float = _VICREG_LAMBDA,
     cl_temp: float = _CL_TEMP,
-) -> Tuple[torch.Tensor, Dict[str, float]]:
+) -> tuple[torch.Tensor, dict[str, float]]:
     """
     Full combined training loss:
         BPR  +  user_CL  +  0.5 × item_CL  +  VICReg variance

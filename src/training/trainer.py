@@ -12,19 +12,18 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 def run_training(
-    anime_catalog: Dict[int, dict],
-    movie_catalog: Dict[int, dict],
-    anime_interactions: Dict[str, List],
-    movie_interactions: Dict[str, List],
-    config: Optional[dict] = None,
-    ckpt_dir: Optional[str] = None,
-    n_epochs: Optional[int] = None,
+    anime_catalog: dict[int, dict],
+    movie_catalog: dict[int, dict],
+    anime_interactions: dict[str, list],
+    movie_interactions: dict[str, list],
+    config: dict | None = None,
+    ckpt_dir: str | None = None,
+    n_epochs: int | None = None,
     resume: bool = True,
 ) -> None:
     """

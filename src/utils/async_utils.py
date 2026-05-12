@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
-from typing import Dict, Optional
 
 try:
     import aiohttp
@@ -20,10 +19,10 @@ RETRY_BACKOFF = 2.0
 async def async_request(
     session: aiohttp.ClientSession,
     url: str,
-    params: Optional[Dict] = None,
+    params: dict | None = None,
     sleep: float = 0.0,
     max_retries: int = MAX_RETRIES,
-) -> Optional[Dict]:
+) -> dict | None:
     """Async GET with exponential back-off and 429 handling."""
     if not HAS_AIOHTTP:
         raise ImportError("aiohttp is required: pip install aiohttp")

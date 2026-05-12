@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import gc
 from pathlib import Path
-from typing import Dict
 
 import numpy as np
 import torch
@@ -34,7 +33,7 @@ TONE_SEED_PAIRS = [
 
 # ---------------------------------------------------------------------------
 def build_text_embeddings(
-    item_descriptions: Dict[int, str],
+    item_descriptions: dict[int, str],
     n_items: int,
     output_path: Path,
     batch_size: int = 256,
@@ -104,7 +103,7 @@ def build_tone_axes(device_str: str = "cpu") -> np.ndarray:
 
 # ---------------------------------------------------------------------------
 def build_embedding_pipeline(
-    item_descriptions: Dict[int, str],
+    item_descriptions: dict[int, str],
     n_items: int,
     output_dir: Path,
     device_str: str = "cpu",
@@ -151,13 +150,13 @@ def build_embedding_pipeline(
         np.save(str(lbl_path), labels)
         np.save(str(cen_path), centroids)
 
-    return dict(
-        item_text_embeddings=embeddings,
-        tone_axes=tone_axes,
-        tone_scores=tone_scores,
-        tone_labels=labels,
-        tone_centroids=centroids,
-    )
+    return {
+        "item_text_embeddings": embeddings,
+        "tone_axes": tone_axes,
+        "tone_scores": tone_scores,
+        "tone_labels": labels,
+        "tone_centroids": centroids,
+    }
 
 
 # ---------------------------------------------------------------------------

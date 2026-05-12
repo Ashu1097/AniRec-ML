@@ -3,7 +3,6 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, List
 
 _DEFAULT_DRIVE_ROOT = os.environ.get("ANIREC_OUTPUT", "./AniRec_output")
 _CKPT = Path(_DEFAULT_DRIVE_ROOT) / "v22"
@@ -19,10 +18,10 @@ ML_INTERACTIONS_PATH = _DATA_DIR / "ml_interactions.json"
 
 def load_cached_data():
     """Load all cached artefacts from disk."""
-    anime_catalog: Dict[int, dict] = {}
-    movie_catalog: Dict[int, dict] = {}
-    anime_interactions: Dict[str, List[dict]] = {}
-    movie_interactions: Dict[str, List[dict]] = {}
+    anime_catalog: dict[int, dict] = {}
+    movie_catalog: dict[int, dict] = {}
+    anime_interactions: dict[str, list[dict]] = {}
+    movie_interactions: dict[str, list[dict]] = {}
 
     if ANIME_CATALOG_PATH.exists():
         with open(ANIME_CATALOG_PATH, encoding="utf-8") as f:

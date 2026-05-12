@@ -2,7 +2,6 @@
 
 import gc
 from pathlib import Path
-from typing import Dict
 
 import numpy as np
 import torch
@@ -31,7 +30,7 @@ TONE_SEED_PAIRS = [
 
 
 def build_text_embeddings(
-    item_descriptions: Dict[int, str],
+    item_descriptions: dict[int, str],
     n_items: int,
     output_path: Path,
     batch_size: int = 256,

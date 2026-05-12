@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import difflib
-from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -33,15 +32,15 @@ class SmartSearch:
 
     def __init__(
         self,
-        anime_names: Dict[int, str],
-        movie_names: Dict[int, str],
-        item_text_np: Optional[np.ndarray] = None,
+        anime_names: dict[int, str],
+        movie_names: dict[int, str],
+        item_text_np: np.ndarray | None = None,
     ) -> None:
         self.item_text_np = item_text_np
-        self._idx_to_name: Dict[int, str] = {}
-        self._name_to_idx: Dict[str, int] = {}
-        self._all_names: List[str] = []
-        self._all_ids: List[int] = []
+        self._idx_to_name: dict[int, str] = {}
+        self._name_to_idx: dict[str, int] = {}
+        self._all_names: list[str] = []
+        self._all_ids: list[int] = []
 
         for idx, nm in {**anime_names, **movie_names}.items():
             self._idx_to_name[idx] = nm
@@ -50,7 +49,7 @@ class SmartSearch:
             self._all_ids.append(idx)
 
     # ------------------------------------------------------------------
-    def find(self, query: str, top_k: int = 1) -> Tuple[Optional[int], Optional[str]]:
+    def find(self, query: str, top_k: int = 1) -> tuple[int | None, str | None]:
         """
         Find the best matching item index for a title query.
 
@@ -91,6 +90,6 @@ class SmartSearch:
         return None, None
 
     # ------------------------------------------------------------------
-    def find_many(self, queries: List[str]) -> List[Tuple[Optional[int], Optional[str]]]:
+    def find_many(self, queries: list[str]) -> list[tuple[int | None, str | None]]:
         """Batch version of :meth:`find`."""
         return [self.find(q) for q in queries]

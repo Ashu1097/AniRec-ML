@@ -3,7 +3,7 @@
 import html
 import re
 import unicodedata
-from typing import Dict, List, Optional
+from typing import Optional
 
 import numpy as np
 
@@ -12,7 +12,7 @@ _RE_URL = re.compile(r"https?://\S+|www\.\S+")
 _RE_SPECIAL = re.compile(r"[^a-z0-9\s]")
 _RE_WHITESPACE = re.compile(r"\s+")
 
-_GENRE_ALIASES: Dict[str, str] = {
+_GENRE_ALIASES: dict[str, str] = {
     "sci-fi": "Sci-Fi",
     "sci fi": "Sci-Fi",
     "science fiction": "Sci-Fi",
@@ -71,7 +71,7 @@ def clean_text(
     return " ".join(words[:max_words])
 
 
-def clean_genres(genres: List[str], *, remove_adult: bool = True) -> List[str]:
+def clean_genres(genres: list[str], *, remove_adult: bool = True) -> list[str]:
     """Canonicalise genre names and optionally remove adult categories."""
     _adult = {"Adult", "Hentai", "Short", "Talk Show", "Reality TV", "Game Show"}
     seen, result = set(), []

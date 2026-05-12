@@ -1,5 +1,4 @@
 # Stub: full implementation in notebooks/experimentation.ipynb.
-from typing import Dict, List
 
 import requests
 
@@ -26,7 +25,7 @@ query ($page: Int, $perPage: Int) {
 """
 
 
-def fetch_anilist_catalog(pages: int = 5) -> List[Dict]:
+def fetch_anilist_catalog(pages: int = 5) -> list[dict]:
     catalog = []
 
     for page in range(1, pages + 1):

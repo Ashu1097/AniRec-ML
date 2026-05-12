@@ -1,10 +1,9 @@
 # Stub: full implementation in notebooks/experimentation.ipynb.
-from typing import Dict, List
 
 import pandas as pd
 
 
-def load_imdb_catalog(path: str) -> List[Dict]:
+def load_imdb_catalog(path: str) -> list[dict]:
     df = pd.read_csv(path)
 
     records = []

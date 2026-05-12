@@ -13,7 +13,6 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import numpy as np
 import torch
@@ -22,13 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 def build_scorer_from_checkpoint(
-    anime_catalog: Dict[int, dict],
-    movie_catalog: Dict[int, dict],
-    anime_interactions: Dict[str, List],
-    movie_interactions: Dict[str, List],
-    checkpoint_path: Optional[str] = None,
-    config: Optional[dict] = None,
-    device: Optional[torch.device] = None,
+    anime_catalog: dict[int, dict],
+    movie_catalog: dict[int, dict],
+    anime_interactions: dict[str, list],
+    movie_interactions: dict[str, list],
+    checkpoint_path: str | None = None,
+    config: dict | None = None,
+    device: torch.device | None = None,
 ) -> InferenceScorer:
     """Instantiate an InferenceScorer from a saved checkpoint."""
     from src.models.anirec import AniRecV20
