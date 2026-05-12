@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 FastAPI route definitions for the AniRec recommendation API.
 
@@ -11,6 +10,7 @@ from typing import List, Optional
 try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
+
     _HAS_FASTAPI = True
 except ImportError:
     _HAS_FASTAPI = False
@@ -47,7 +47,8 @@ if _HAS_FASTAPI:
         if scorer is None:
             raise HTTPException(status_code=503, detail="Scorer not initialised")
         recs, _ = scorer.recommend_by_names(
-            req.titles, k=req.k,
+            req.titles,
+            k=req.k,
             user_id=req.user_id,
             ui_context=req.ui_context,
         )

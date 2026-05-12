@@ -8,7 +8,7 @@ class DiskCache:
     def set(self, key, value):
         if value is None:
             raise ValueError("None values are not allowed")
-    
+
         self.store[key] = value
 
     def clear(self):

@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 # Stub: full implementation in notebooks/experimentation.ipynb.
-import requests
-from typing import List, Dict
+from typing import Dict, List
 
-from src.data.cleaning import clean_text, clean_genres
+import requests
+
+from src.data.cleaning import clean_genres, clean_text
 
 ANILIST_URL = "https://graphql.anilist.co"
 
@@ -24,7 +24,6 @@ query ($page: Int, $perPage: Int) {
   }
 }
 """
-
 
 
 def fetch_anilist_catalog(pages: int = 5) -> List[Dict]:
@@ -48,13 +47,15 @@ def fetch_anilist_catalog(pages: int = 5) -> List[Dict]:
         media = data["data"]["Page"]["media"]
 
         for item in media:
-            catalog.append({
-                "id": item["id"],
-                "title": item["title"].get("english") or item["title"].get("romaji"),
-                "genres": clean_genres(item.get("genres", [])),
-                "description": clean_text(item.get("description", "")),
-                "score": item.get("averageScore", 0),
-                "popularity": item.get("popularity", 0),
-            })
+            catalog.append(
+                {
+                    "id": item["id"],
+                    "title": item["title"].get("english") or item["title"].get("romaji"),
+                    "genres": clean_genres(item.get("genres", [])),
+                    "description": clean_text(item.get("description", "")),
+                    "score": item.get("averageScore", 0),
+                    "popularity": item.get("popularity", 0),
+                }
+            )
 
     return catalog

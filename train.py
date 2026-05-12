@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 AniRec v22 — Training entry point.
 
@@ -81,6 +80,7 @@ def _parse_args() -> argparse.Namespace:
 def _load_config(path: str) -> dict:
     try:
         import yaml  # type: ignore
+
         with open(path, encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
     except FileNotFoundError:
@@ -93,7 +93,7 @@ def _load_config(path: str) -> dict:
 
 def main() -> None:
     args = _parse_args()
-    cfg  = _load_config(args.config)
+    cfg = _load_config(args.config)
 
     # Lazy imports (keeps startup fast)
     try:
@@ -107,9 +107,10 @@ def main() -> None:
         try:
             from src.data.catalog import (
                 ANIME_CATALOG_PATH,
-                MOVIE_CATALOG_PATH,
                 INTERACTIONS_PATH,
+                MOVIE_CATALOG_PATH,
             )
+
             all_exist = (
                 ANIME_CATALOG_PATH.exists()
                 and MOVIE_CATALOG_PATH.exists()
@@ -117,11 +118,11 @@ def main() -> None:
             )
             if all_exist and not args.force_preprocess:
                 logger.info(
-                    "All caches exist — skipping preprocess. "
-                    "Use --force-preprocess to re-fetch."
+                    "All caches exist — skipping preprocess. Use --force-preprocess to re-fetch."
                 )
             else:
                 from src.data.preprocess import run_preprocessing
+
                 logger.info("Running preprocessing pipeline...")
                 run_preprocessing()
         except Exception as exc:
@@ -133,13 +134,12 @@ def main() -> None:
         anime_catalog, movie_catalog, anime_inter, movie_inter = load_cached_data()
 
         if not anime_catalog:
-            logger.error(
-                "Anime catalog is empty. Run with --mode preprocess first."
-            )
+            logger.error("Anime catalog is empty. Run with --mode preprocess first.")
             sys.exit(1)
 
         logger.info("Starting training…")
         from src.training.trainer import run_training
+
         run_training(
             anime_catalog=anime_catalog,
             movie_catalog=movie_catalog,

@@ -1,6 +1,7 @@
 """AniRec v22 — Multi-Domain Anime & Movie Recommender."""
 
 from pathlib import Path
+
 from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent

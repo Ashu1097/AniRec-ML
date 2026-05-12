@@ -1,19 +1,15 @@
-# -*- coding: utf-8 -*-
 """Tests for data cleaning, caching, and utility functions."""
-
-import os
-import tempfile
 
 import numpy as np
 import pytest
 
+from src.data.cache import DiskCache
 from src.data.cleaning import (
     clean_genres,
     clean_text,
     normalize_popularity,
     normalize_ratings,
 )
-from src.data.cache import DiskCache
 
 
 class TestCleanText:

@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # Stub: full implementation in notebooks/experimentation.ipynb.
-import pandas as pd
 from typing import Dict, List
 
+import pandas as pd
 
 
 def load_movielens_interactions(path: str) -> Dict[str, List[dict]]:
@@ -16,10 +15,12 @@ def load_movielens_interactions(path: str) -> Dict[str, List[dict]]:
         if user_id not in interactions:
             interactions[user_id] = []
 
-        interactions[user_id].append({
-            "item_id": int(row["movieId"]),
-            "rating": float(row["rating"]),
-            "timestamp": int(row["timestamp"]),
-        })
+        interactions[user_id].append(
+            {
+                "item_id": int(row["movieId"]),
+                "rating": float(row["rating"]),
+                "timestamp": int(row["timestamp"]),
+            }
+        )
 
     return interactions

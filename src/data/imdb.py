@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # Stub: full implementation in notebooks/experimentation.ipynb.
-import pandas as pd
-from typing import List, Dict
+from typing import Dict, List
 
+import pandas as pd
 
 
 def load_imdb_catalog(path: str) -> List[Dict]:
@@ -11,10 +10,12 @@ def load_imdb_catalog(path: str) -> List[Dict]:
     records = []
 
     for _, row in df.iterrows():
-        records.append({
-            "title": row.get("title"),
-            "rating": row.get("rating", 0),
-            "genres": str(row.get("genres", "")).split(","),
-        })
+        records.append(
+            {
+                "title": row.get("title"),
+                "rating": row.get("rating", 0),
+                "genres": str(row.get("genres", "")).split(","),
+            }
+        )
 
     return records

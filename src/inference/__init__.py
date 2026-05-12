@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Inference utilities for AniRec v22."""
 
 from src.inference.scoring_utils import (

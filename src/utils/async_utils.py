@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Async HTTP helpers and event-loop utilities."""
 
 from __future__ import annotations
@@ -9,16 +8,17 @@ from typing import Dict, Optional
 
 try:
     import aiohttp
+
     HAS_AIOHTTP = True
 except ImportError:
     HAS_AIOHTTP = False
 
-MAX_RETRIES   = 6
+MAX_RETRIES = 6
 RETRY_BACKOFF = 2.0
 
 
 async def async_request(
-    session: "aiohttp.ClientSession",
+    session: aiohttp.ClientSession,
     url: str,
     params: Optional[Dict] = None,
     sleep: float = 0.0,
@@ -31,7 +31,8 @@ async def async_request(
     for attempt in range(max_retries):
         try:
             async with session.get(
-                url, params=params,
+                url,
+                params=params,
                 timeout=aiohttp.ClientTimeout(total=15),
             ) as r:
                 if r.status == 200:
@@ -42,9 +43,9 @@ async def async_request(
                 elif r.status == 404:
                     return None
                 else:
-                    await asyncio.sleep(RETRY_BACKOFF ** attempt)
+                    await asyncio.sleep(RETRY_BACKOFF**attempt)
         except Exception:
-            await asyncio.sleep(RETRY_BACKOFF ** attempt)
+            await asyncio.sleep(RETRY_BACKOFF**attempt)
     return None
 
 

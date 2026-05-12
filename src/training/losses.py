@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 """Training loss functions for AniRec v22."""
 
 from typing import Dict, Optional, Tuple
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 # ── Hyper-parameters (imported from config at runtime; defaults here) ─────────
@@ -143,11 +141,7 @@ def combined_training_loss(
         loss_cl_item = semantic_cl_loss(item_embs, sem_pairs_batch, temp=cl_temp)
     loss_var = vicreg_variance_loss(item_embs)
 
-    total = (
-        loss_bpr
-        + cl_lambda * (loss_cl_user + 0.5 * loss_cl_item)
-        + vicreg_lambda * loss_var
-    )
+    total = loss_bpr + cl_lambda * (loss_cl_user + 0.5 * loss_cl_item) + vicreg_lambda * loss_var
     return total, {
         "bpr": loss_bpr.item(),
         "cl_user": loss_cl_user.item(),

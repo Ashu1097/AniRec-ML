@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 """Tests for training loss functions."""
 
-import pytest
 import torch
 import torch.nn.functional as F
 
@@ -144,9 +142,7 @@ class TestCombinedTrainingLoss:
         item_embs = F.normalize(torch.randn(200, D), dim=-1)
         pairs = torch.randint(0, 200, (30, 2))
 
-        total, parts = combined_training_loss(
-            s_pos, s_neg, w, gnn_u, sasr, item_embs, pairs
-        )
+        total, parts = combined_training_loss(s_pos, s_neg, w, gnn_u, sasr, item_embs, pairs)
         assert total.item() > 0
         for key in ("bpr", "cl_user", "cl_item", "variance", "total"):
             assert key in parts

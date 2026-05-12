@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 AniRec v22 — training loop entry point.
 
@@ -10,7 +9,6 @@ by tests.
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 from pathlib import Path
@@ -44,34 +42,36 @@ def run_training(
     """
     # Local import keeps startup fast when only inference is needed.
     try:
+        import numpy as np
         import torch
         from torch.amp import GradScaler
-        import numpy as np
     except ImportError as exc:
         raise ImportError(
-            "PyTorch is required for training. "
-            "Install it with: pip install torch"
+            "PyTorch is required for training. Install it with: pip install torch"
         ) from exc
 
-    from src.training.dataset import load_dataset_v19
     from src.models.anirec import AniRecV20
-    from src.training.losses import combined_training_loss, weighted_bpr_loss
-    from src.utils.progress import print_section, print_ok, print_warn
+    from src.training.dataset import load_dataset_v19
+    from src.utils.progress import print_ok, print_section, print_warn
 
     cfg = config or {}
-    _n_epochs  = n_epochs or cfg.get("n_epochs", 40)
-    _ckpt_dir  = ckpt_dir or cfg.get("ckpt_dir", "./AniRec_output/v22")
+    _n_epochs = n_epochs or cfg.get("n_epochs", 40)
+    _ckpt_dir = ckpt_dir or cfg.get("ckpt_dir", "./AniRec_output/v22")
     os.makedirs(_ckpt_dir, exist_ok=True)
 
     print_section("BUILDING DATASET")
     embed_dir = Path(_ckpt_dir) / "embeddings"
     data = load_dataset_v19(
-        anime_catalog, movie_catalog,
-        anime_interactions, movie_interactions,
+        anime_catalog,
+        movie_catalog,
+        anime_interactions,
+        movie_interactions,
         embedding_dir=embed_dir if embed_dir.exists() else None,
     )
 
-    n_u = data["n_users"]; n_i = data["n_items"]; n_g = data["n_genres"]
+    n_u = data["n_users"]
+    n_i = data["n_items"]
+    n_g = data["n_genres"]
     has_text = data["item_text_embeddings"] is not None
     has_tone = data["tone_scores"] is not None
 
@@ -82,14 +82,17 @@ def run_training(
     if N_TRAIN < 100:
         print_warn(
             f"Only {N_TRAIN} training triples — skipping training."
-            " Re-run preprocess with more users.")
+            " Re-run preprocess with more users."
+        )
         return
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     print_section("INITIALISING MODEL")
     model = AniRecV20(
-        n_u, n_i, n_g,
+        n_u,
+        n_i,
+        n_g,
         use_text=has_text,
         use_tone=has_tone,
     ).to(device)

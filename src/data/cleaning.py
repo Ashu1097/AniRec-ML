@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Text and metadata cleaning utilities."""
 
 import html
@@ -14,18 +13,40 @@ _RE_SPECIAL = re.compile(r"[^a-z0-9\s]")
 _RE_WHITESPACE = re.compile(r"\s+")
 
 _GENRE_ALIASES: Dict[str, str] = {
-    "sci-fi": "Sci-Fi", "sci fi": "Sci-Fi", "science fiction": "Sci-Fi",
-    "slice of life": "Slice of Life", "slice-of-life": "Slice of Life",
-    "shounen": "Shounen", "shonen": "Shounen", "shoujo": "Shoujo",
-    "seinen": "Seinen", "josei": "Josei", "mecha": "Mecha", "isekai": "Isekai",
-    "romance": "Romance", "romantic": "Romance", "action": "Action",
-    "adventure": "Adventure", "comedy": "Comedy", "drama": "Drama",
-    "fantasy": "Fantasy", "horror": "Horror", "mystery": "Mystery",
-    "psychological": "Psychological", "thriller": "Thriller",
-    "sports": "Sports", "sport": "Sports", "supernatural": "Supernatural",
-    "music": "Music", "history": "Historical", "historical": "Historical",
-    "war": "War", "animation": "Animation", "documentary": "Documentary",
-    "family": "Family", "crime": "Crime",
+    "sci-fi": "Sci-Fi",
+    "sci fi": "Sci-Fi",
+    "science fiction": "Sci-Fi",
+    "slice of life": "Slice of Life",
+    "slice-of-life": "Slice of Life",
+    "shounen": "Shounen",
+    "shonen": "Shounen",
+    "shoujo": "Shoujo",
+    "seinen": "Seinen",
+    "josei": "Josei",
+    "mecha": "Mecha",
+    "isekai": "Isekai",
+    "romance": "Romance",
+    "romantic": "Romance",
+    "action": "Action",
+    "adventure": "Adventure",
+    "comedy": "Comedy",
+    "drama": "Drama",
+    "fantasy": "Fantasy",
+    "horror": "Horror",
+    "mystery": "Mystery",
+    "psychological": "Psychological",
+    "thriller": "Thriller",
+    "sports": "Sports",
+    "sport": "Sports",
+    "supernatural": "Supernatural",
+    "music": "Music",
+    "history": "Historical",
+    "historical": "Historical",
+    "war": "War",
+    "animation": "Animation",
+    "documentary": "Documentary",
+    "family": "Family",
+    "crime": "Crime",
 }
 
 

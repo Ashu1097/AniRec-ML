@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
 """Score normalisation and sharpening utilities used by InferenceScorer."""
-
-from typing import Optional
 
 import numpy as np
 
@@ -33,6 +30,7 @@ def zscore_normalize(
     out = target_lo + ranks * (target_hi - target_lo)
 
     return out.astype(np.float32)
+
 
 def sharpen_scores(
     scores: np.ndarray,
@@ -81,6 +79,7 @@ def power_scale(scores: np.ndarray, exponent: float = 1.5) -> np.ndarray:
     """Apply x^exponent power scaling after clipping to [0, 1]."""
     return np.power(np.clip(scores, 0.0, 1.0), exponent).astype(np.float32)
 
+
 def calibrate_scores(scores, domain_mask=None):
     scores = np.asarray(scores, dtype=np.float32)
 
@@ -95,6 +94,7 @@ def calibrate_scores(scores, domain_mask=None):
         out = out * np.asarray(domain_mask, dtype=np.float32)
 
     return out.astype(np.float32)
+
 
 def compute_genre_match_score(cands, item_genres, user_gw=None):
     user_gw = user_gw or {}
@@ -112,6 +112,7 @@ def compute_genre_match_score(cands, item_genres, user_gw=None):
         out.append(score)
 
     return np.asarray(out, dtype=np.float32)
+
 
 def diversity_penalty_scores(
     cands,
@@ -139,6 +140,7 @@ def diversity_penalty_scores(
         seen.append(genres)
 
     return out
+
 
 def popularity_penalty(popularity, alpha=1.0):
     popularity = np.asarray(popularity, dtype=np.float32)

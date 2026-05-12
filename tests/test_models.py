@@ -1,21 +1,18 @@
-# -*- coding: utf-8 -*-
 """Tests for model architectures: LightGCN, SASRec, NCF, AniRecV20."""
 
 import numpy as np
 import pytest
 import scipy.sparse as sp
 import torch
-import torch.nn as nn
 
 from src.models.anirec import AniRecV20, GatedFusion
 from src.models.lightgcn import LightGCN
 from src.models.ncf import NCF
 from src.models.sasrec import SASRec
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
-N_U, N_I, DIM = 50, 100, 256   # DIM=256 matches default model config
+N_U, N_I, DIM = 50, 100, 256  # DIM=256 matches default model config
 N_GENRES = 20
 BATCH = 8
 SEQ_LEN = 10
@@ -30,12 +27,13 @@ def _random_adj(n_u, n_i, nnz=200):
     A = sp.csr_matrix((data, (rows, cols)), shape=(n, n))
     A = A + A.T
     deg = np.array(A.sum(1)).flatten()
-    di = np.where(deg > 0, deg ** -0.5, 0.0).astype(np.float32)
+    di = np.where(deg > 0, deg**-0.5, 0.0).astype(np.float32)
     A_tilde = sp.diags(di) @ A @ sp.diags(di)
     return A_tilde.tocsr()
 
 
 # ── LightGCN ──────────────────────────────────────────────────────────────────
+
 
 class TestLightGCN:
     def test_forward_shapes(self):
@@ -67,6 +65,7 @@ class TestLightGCN:
 
 # ── SASRec ────────────────────────────────────────────────────────────────────
 
+
 class TestSASRec:
     def test_output_shape(self):
         model = SASRec(N_I, dim=DIM, max_len=SEQ_LEN)
@@ -85,7 +84,7 @@ class TestSASRec:
         model = SASRec(N_I, dim=DIM, max_len=SEQ_LEN)
         seq = torch.randint(0, N_I + 1, (4, SEQ_LEN))
         # Mask first half as padding
-        seq[:, :SEQ_LEN // 2] = 0
+        seq[:, : SEQ_LEN // 2] = 0
         out = model(seq)
         assert out.shape == (4, DIM)
 
@@ -98,6 +97,7 @@ class TestSASRec:
 
 
 # ── NCF ───────────────────────────────────────────────────────────────────────
+
 
 class TestNCF:
     def test_output_shape(self):
@@ -146,6 +146,7 @@ class TestNCF:
 
 # ── GatedFusion ───────────────────────────────────────────────────────────────
 
+
 class TestGatedFusion:
     def test_output_shape(self):
         fusion = GatedFusion(dim=DIM)
@@ -166,6 +167,7 @@ class TestGatedFusion:
 
 
 # ── AniRecV20 (full model) ────────────────────────────────────────────────────
+
 
 class TestAniRecV20:
     @pytest.fixture(autouse=True)

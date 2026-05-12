@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
 """Unit tests for FeedbackStore."""
-
-import tempfile
-from pathlib import Path
 
 import pytest
 
@@ -43,14 +39,14 @@ class TestFeedbackStore:
     def test_bpr_pairs(self, store):
         store.record("user1", 10, 1)
         store.record("user1", 20, -1)
-        uid_map  = {"user1": 0}
-        iid_map  = {10: 0, 20: 1}
+        uid_map = {"user1": 0}
+        iid_map = {10: 0, 20: 1}
         pos, neg = store.get_bpr_pairs(uid_map, iid_map)
         assert (0, 0) in pos
         assert (0, 1) in neg
 
     def test_unknown_user_empty(self, store):
-        signals  = store.get_user_signals("nobody")
+        signals = store.get_user_signals("nobody")
         disliked = store.get_disliked_items("nobody")
         assert signals == {}
         assert disliked == set()

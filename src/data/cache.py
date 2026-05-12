@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Disk-based JSON cache for API responses."""
 
 import hashlib
@@ -26,7 +25,7 @@ class DiskCache:
         p = self._path(key)
         if p.exists():
             try:
-                with open(p, "r", encoding="utf-8") as f:
+                with open(p, encoding="utf-8") as f:
                     return json.load(f)
             except Exception:
                 p.unlink(missing_ok=True)

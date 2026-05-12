@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """SQLite-backed feedback store for thumbs-up / thumbs-down signals."""
 
 import sqlite3
@@ -50,9 +49,7 @@ class FeedbackStore:
 
     def get_all(self) -> List[dict]:
         conn = sqlite3.connect(self.db_path)
-        rows = conn.execute(
-            "SELECT user_id, item_id, signal FROM feedback ORDER BY ts"
-        ).fetchall()
+        rows = conn.execute("SELECT user_id, item_id, signal FROM feedback ORDER BY ts").fetchall()
         conn.close()
         return [{"user_id": r[0], "item_id": r[1], "signal": r[2]} for r in rows]
 

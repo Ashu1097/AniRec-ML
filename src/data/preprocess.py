@@ -10,19 +10,14 @@ DATA_DIR = Path("AniRec_output") / "v22" / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
-
 def generate_embeddings(items, model_name="all-MiniLM-L6-v2"):
     model = SentenceTransformer(model_name)
 
-    texts = [
-        f"{item['title']} {item.get('description', '')}"
-        for item in items
-    ]
+    texts = [f"{item['title']} {item.get('description', '')}" for item in items]
 
     embeddings = model.encode(texts, show_progress_bar=True)
 
     return embeddings.tolist()
-
 
 
 def run_preprocessing():
@@ -30,9 +25,7 @@ def run_preprocessing():
     anime_catalog = fetch_anilist_catalog()
 
     print("Loading MovieLens interactions...")
-    interactions = load_movielens_interactions(
-        "data/ratings.csv"
-    )
+    interactions = load_movielens_interactions("data/ratings.csv")
 
     print("Generating embeddings...")
     embeddings = generate_embeddings(anime_catalog)

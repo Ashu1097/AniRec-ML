@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
 """Tests for inference scoring utilities."""
 
 import numpy as np
 import pytest
 
 from src.inference.scoring_utils import (
-    enforce_score_spread,
-    power_scale,
-    safe_normalize,
-    zscore_normalize,
-    sharpen_scores,
     calibrate_scores,
     compute_genre_match_score,
     diversity_penalty_scores,
+    enforce_score_spread,
     popularity_penalty,
+    power_scale,
+    safe_normalize,
+    sharpen_scores,
+    zscore_normalize,
 )
 
 
@@ -87,8 +86,8 @@ class TestPowerScale:
     def test_exponent_gt1_compresses_low(self):
         x = np.array([0.1, 0.5, 0.9], dtype=np.float32)
         out = power_scale(x, exponent=2.0)
-        assert out[0] < x[0]   # low values get pushed down
-        assert out[2] < x[2]   # high values also get pushed down (power < input for x<1)
+        assert out[0] < x[0]  # low values get pushed down
+        assert out[2] < x[2]  # high values also get pushed down (power < input for x<1)
 
 
 class TestSharpenScores:

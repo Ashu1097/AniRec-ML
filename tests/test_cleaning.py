@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tests for src.data.cleaning — text and metadata normalisation."""
 
 import numpy as np
@@ -15,7 +14,7 @@ from src.data.cleaning import (
 # ---------------------------------------------------------------------------
 class TestCleanText:
     def test_basic_cleanup(self):
-        assert "hello world" == clean_text("Hello World!", min_words=1)
+        assert clean_text("Hello World!", min_words=1) == "hello world"
 
     def test_html_stripped(self):
         result = clean_text("<b>Bold</b> and <i>italic</i>", min_words=1)

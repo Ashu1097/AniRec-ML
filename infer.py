@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 AniRec v22 — Inference entry point.
 
@@ -21,7 +20,6 @@ Output JSON instead of table:
 import argparse
 import json
 import logging
-import os
 import sys
 
 logging.basicConfig(
@@ -38,16 +36,16 @@ def _print_table(results: list) -> None:
         return
     col_w = 36
     print(f"\n  {'#':>3}  {'Domain':<7}  {'Title':<{col_w}}  {'Score':>6}  Reason")
-    print(f"  {'─'*3}  {'─'*7}  {'─'*col_w}  {'─'*6}  {'─'*40}")
+    print(f"  {'─' * 3}  {'─' * 7}  {'─' * col_w}  {'─' * 6}  {'─' * 40}")
     for r in results:
-        title   = r.get("title", "?")[:col_w]
-        domain  = r.get("domain", "?")
-        score   = r.get("score", 0.0)
-        reason  = r.get("reason", "")[:50]
-        rank    = r.get("rank", "?")
-        genres  = ", ".join(r.get("genres", [])[:3])
+        title = r.get("title", "?")[:col_w]
+        domain = r.get("domain", "?")
+        score = r.get("score", 0.0)
+        reason = r.get("reason", "")[:50]
+        rank = r.get("rank", "?")
+        genres = ", ".join(r.get("genres", [])[:3])
         print(f"  {rank:>3}  {domain:<7}  {title:<{col_w}}  {score:>6.4f}  {reason}")
-        print(f"       {'':7}  {'  Genres: '+genres}")
+        print(f"       {'':7}  {'  Genres: ' + genres}")
     print()
 
 
@@ -107,9 +105,7 @@ def main() -> None:
         from src.data.catalog import load_cached_data
         from src.inference.scorer import build_scorer_from_checkpoint
     except ImportError:
-        logger.error(
-            "Could not import src package. Run 'pip install -e .' first."
-        )
+        logger.error("Could not import src package. Run 'pip install -e .' first.")
         sys.exit(1)
 
     logger.info("Loading cached catalog & interactions…")

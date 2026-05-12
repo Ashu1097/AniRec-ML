@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Data loading, cleaning, caching, and feedback utilities."""
 
 from src.data.cache import DiskCache
