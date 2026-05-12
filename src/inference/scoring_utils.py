@@ -82,3 +82,59 @@ def enforce_score_spread(
 def power_scale(scores: np.ndarray, exponent: float = 1.5) -> np.ndarray:
     """Apply x^exponent power scaling after clipping to [0, 1]."""
     return np.power(np.clip(scores, 0.0, 1.0), exponent).astype(np.float32)
+
+def calibrate_scores(scores):
+    if not scores:
+        return []
+
+    lo = min(scores)
+    hi = max(scores)
+
+    if hi - lo == 0:
+        return [1.0 for _ in scores]
+
+    return [(s - lo) / (hi - lo) for s in scores]
+
+def compute_genre_match_score(genres_a, genres_b):
+    """
+    Simple genre overlap score.
+    """
+
+    set_a = set(genres_a or [])
+    set_b = set(genres_b or [])
+
+    if not set_a or not set_b:
+        return 0.0
+
+    overlap = len(set_a & set_b)
+    union = len(set_a | set_b)
+
+    return overlap / union
+
+def diversity_penalty_scores(scores, penalty=0.1):
+    """
+    Apply a simple diversity penalty across ranked scores.
+    """
+
+    if not scores:
+        return []
+
+    adjusted = []
+
+    for idx, score in enumerate(scores):
+        adjusted_score = score - (idx * penalty)
+        adjusted.append(adjusted_score)
+
+    return adjusted
+
+def popularity_penalty(score, popularity, alpha=0.1):
+    """
+    Penalize overly popular items slightly.
+    """
+
+    try:
+        popularity = float(popularity)
+    except Exception:
+        popularity = 0.0
+
+    return score - (alpha * popularity)
