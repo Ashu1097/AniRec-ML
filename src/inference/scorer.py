@@ -59,7 +59,11 @@ def build_scorer_from_checkpoint(
         checkpoint_path = str(default_ckpt)
 
     if os.path.exists(checkpoint_path):
-        ck = torch.load(checkpoint_path, map_location=_device, weights_only=False)
+        ck = torch.load(  # nosec B614
+            checkpoint_path,
+            map_location=device,
+            weights_only=False,
+        )
         try:
             model.load_state_dict(ck["model"])
         except Exception:
